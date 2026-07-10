@@ -48,6 +48,27 @@ describe('parseVault', () => {
     expect(stubIds.size).toBeGreaterThan(0);
   });
 
+  it('extracts edges from frontmatter relations (related:) via relative paths', async () => {
+    const { edges } = await parseVault(FIXTURE_VAULT);
+    const derivedToAlice = edges.find(
+      e => e.sourceId === 'Ideas/Derived Note.md'
+        && e.targetId === 'People/Alice Smith.md'
+    );
+    expect(derivedToAlice).toBeDefined();
+    expect(derivedToAlice!.context).toContain('frontmatter relation:');
+  });
+
+  it('deduplicates a frontmatter relation that repeats a body wiki link', async () => {
+    // Gadget Pattern has both a body [[Widget Theory]] link and a
+    // related: ["[[Concepts/Widget Theory]]"] frontmatter ref → one edge, not two.
+    const { edges } = await parseVault(FIXTURE_VAULT);
+    const gadgetToWidget = edges.filter(
+      e => e.sourceId === 'Concepts/Gadget Pattern.md'
+        && e.targetId === 'Concepts/Widget Theory.md'
+    );
+    expect(gadgetToWidget).toHaveLength(1);
+  });
+
   it('extracts inline tags', async () => {
     const { nodes } = await parseVault(FIXTURE_VAULT);
     const bob = nodes.find(n => n.id === 'People/Bob Jones.md')!;
