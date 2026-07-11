@@ -8,7 +8,7 @@ status: active
 # Bob Jones
 
 ## Context
-- Researcher focused on [[Widget Theory]]
+- Researcher focused on [Widget Theory](../Concepts/Widget Theory.md)
 - Works closely with [[People/Alice Smith]]
 
 ## Notes
